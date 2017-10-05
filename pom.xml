@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.expenses.bundle</groupId>
+    <artifactId>parent</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <modules>
+        <module>superbundle</module>
+    </modules>
+
+    <properties>
+        <org.apache.felix.version>2.5.1</org.apache.felix.version>
+        <org.apache.maven.plugins.version>2.5.1</org.apache.maven.plugins.version>
+        <org.apache.maven.plugin.maven-jar-plugin.version>3.0.2</org.apache.maven.plugin.maven-jar-plugin.version>
+    </properties>
+
+    <build>
+        <finalName>parent.superbundle</finalName>
+        <pluginManagement>
+            <plugins>
+               <!-- &lt;!&ndash; Set a JDK compiler level -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.3</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                    </configuration>
+                </plugin>
+
+                <!-- Make this jar executable -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${org.apache.maven.plugin.maven-jar-plugin.version}</version>
+                    <configuration>
+                        <!-- DO NOT include log4j.properties file in your Jar -->
+                        <excludes>
+                            <exclude>**/log4j.properties</exclude>
+                        </excludes>
+                        <archive>
+                            <manifest>
+                                <addClasspath>true</addClasspath>
+                                <!-- Jar file entry point -->
+                                <mainClass>com.expenses.spark.api.StartSpark</mainClass>
+                                <classpathPrefix>dependency-jars/</classpathPrefix>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+
+                <!-- Copy project dependency -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${org.apache.maven.plugins.version}</version>
+                    <executions>
+                        <execution>
+                            <id>copy-dependencies</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <configuration>
+                                <!-- exclude junit, we need runtime dependency only -->
+                                <includeScope>runtime</includeScope>
+                                <outputDirectory>${project.build.directory}/dependency-jars/</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!--<plugin>-->
+                    <!--<groupId>org.apache.felix</groupId>-->
+                    <!--<artifactId>maven-bundle-plugin</artifactId>-->
+                    <!--<version>${org.apache.felix.version}</version>-->
+                    <!--<extensions>true</extensions>-->
+                    <!--<inherited>true</inherited>-->
+                    <!--<executions>-->
+                        <!--<execution>-->
+                            <!--<id>bundle-manifest</id>-->
+                            <!--<phase>process-classes</phase>-->
+                            <!--<goals>-->
+                                <!--<goal>manifest</goal>-->
+                            <!--</goals>-->
+                        <!--</execution>-->
+                    <!--</executions>-->
+                <!--</plugin>-->
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/glassfish/</url>
+        </pluginRepository>
+    </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>nx-releases</id>
+            <name>Releases</name>
+            <url>http://localhost:8081/repository/maven-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>nx-snapshots</id>
+            <name>Snapshot</name>
+            <url>http://localhost:8081/repository/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+</project>
